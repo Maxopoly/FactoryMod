@@ -2,7 +2,6 @@ package com.github.igotyou.FactoryMod.factories;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -55,9 +54,8 @@ public class FurnCraftChestFactory extends Factory {
 
 	private static HashSet<FurnCraftChestFactory> pylonFactories;
 
-	public FurnCraftChestFactory(IInteractionManager im, IRepairManager rm,
-			IPowerManager ipm, FurnCraftChestStructure mbs, int updateTime,
-			String name, List<IRecipe> recipes) {
+	public FurnCraftChestFactory(IInteractionManager im, IRepairManager rm, IPowerManager ipm,
+			FurnCraftChestStructure mbs, int updateTime, String name, List<IRecipe> recipes) {
 		super(im, rm, ipm, mbs, updateTime, name);
 		this.active = false;
 		this.recipes = recipes;
@@ -93,8 +91,7 @@ public class FurnCraftChestFactory extends Factory {
 	 *         should be
 	 */
 	public FurnaceInventory getFurnaceInventory() {
-		if (!(getFurnace().getType() == Material.FURNACE || getFurnace()
-				.getType() == Material.BURNING_FURNACE)) {
+		if (!(getFurnace().getType() == Material.FURNACE || getFurnace().getType() == Material.BURNING_FURNACE)) {
 			return null;
 		}
 		Furnace furnaceBlock = (Furnace) (getFurnace().getState());
@@ -106,85 +103,80 @@ public class FurnCraftChestFactory extends Factory {
 	 * that the factory is allowed to turn on
 	 */
 	public void attemptToActivate(Player p, boolean onStartUp) {
-		LoggingUtils.log((p != null ? p.getName() : "Redstone")
-				+ " is attempting to activate " + getLogData());
+		LoggingUtils.log((p != null ? p.getName() : "Redstone") + " is attempting to activate " + getLogData());
 		mbs.recheckComplete();
- 
+
 		if (active) {
 			return;
 		}
-		if (mbs.isComplete()) {
-			if (hasInputMaterials()) {
-				if (pm.powerAvailable()) {
-					if (rm.inDisrepair()
-							&& !(currentRecipe instanceof RepairRecipe)) {
-						if (p != null) {
-							p.sendMessage(ChatColor.RED
-									+ "This factory is in disrepair, you have to repair it before using it");
-						}
-						return;
-					}
-					if (currentRecipe instanceof RepairRecipe
-							&& rm.atFullHealth()) {
-						if (p != null) {
-							p.sendMessage("This factory is already at full health!");
-						}
-						return;
-					}
-					if (!onStartUp && currentRecipe instanceof Upgraderecipe
-							&& FactoryMod.getManager().isCitadelEnabled()) {
-						// only allow permitted members to upgrade the factory
-						ReinforcementManager rm = Citadel
-								.getReinforcementManager();
-						PlayerReinforcement rein = (PlayerReinforcement) rm
-								.getReinforcement(mbs.getCenter());
-						if (rein != null) {
-							if (p == null) {
-								return;
-							}
-							if (!NameAPI.getGroupManager().hasAccess(rein.getGroup().getName(),
-									p.getUniqueId(), PermissionType.getPermission("UPGRADE_FACTORY"))) {
-								p.sendMessage(ChatColor.RED + "You dont have permission to upgrade this factory");
-								return;
-							}
-						}
-					}
-					FactoryActivateEvent fae = new FactoryActivateEvent(this, p);
-					Bukkit.getPluginManager().callEvent(fae);
-					if (fae.isCancelled()) {
-						return;
-					}
-					if (p != null) {
-						int consumptionIntervall = ((InputRecipe) currentRecipe)
-								.getFuelConsumptionIntervall() != -1 ? ((InputRecipe) currentRecipe)
-								.getFuelConsumptionIntervall() : pm
-								.getPowerConsumptionIntervall();
-						if (((FurnacePowerManager) pm).getFuelAmountAvailable() < (currentRecipe
-								.getProductionTime() / consumptionIntervall)) {
-							p.sendMessage(ChatColor.RED
-									+ "You don't have enough fuel, the factory will run out of it before completing");
-						}
-						p.sendMessage(ChatColor.GREEN + "Activated " + name
-								+ " with recipe: "
-								+ currentRecipe.getName());
-						activator = p.getUniqueId();
-					}
-					activate();
-				} else {
-					if (p != null) {
-						p.sendMessage(ChatColor.RED
-								+ "Failed to activate factory, there is no fuel in the furnace");
-					}
+		if (!mbs.isComplete()) {
+			rm.breakIt();
+			if (p != null) {
+				p.sendMessage(ChatColor.RED + "This factory is in disrepair, you have to repair it before using it");
+			}
+			return;
+		}
+		if (currentRecipe == null) {
+			if (p != null) {
+				p.sendMessage(ChatColor.RED + "This factory currently has no recipe selected");
+			}
+			return;
+		}
+		if (!hasInputMaterials()) {
+			if (p != null) {
+				p.sendMessage(ChatColor.RED + "Not enough materials available");
+			}
+			return;
+		}
+		if (!pm.powerAvailable()) {
+			if (p != null) {
+				p.sendMessage(ChatColor.RED + "Failed to activate factory, there is no fuel in the furnace");
+			}
+			return;
+		}
+		if (rm.inDisrepair() && !(currentRecipe instanceof RepairRecipe)) {
+			if (p != null) {
+				p.sendMessage(ChatColor.RED + "This factory is in disrepair, you have to repair it before using it");
+			}
+			return;
+		}
+		if (currentRecipe instanceof RepairRecipe && rm.atFullHealth()) {
+			if (p != null) {
+				p.sendMessage("This factory is already at full health!");
+			}
+			return;
+		}
+		if (!onStartUp && currentRecipe instanceof Upgraderecipe && FactoryMod.getManager().isCitadelEnabled()) {
+			// only allow permitted members to upgrade the factory
+			ReinforcementManager rm = Citadel.getReinforcementManager();
+			PlayerReinforcement rein = (PlayerReinforcement) rm.getReinforcement(mbs.getCenter());
+			if (rein != null) {
+				if (p == null) {
+					return;
 				}
-			} else {
-				if (p != null) {
-					p.sendMessage(ChatColor.RED
-							+ "Not enough materials available");
+				if (!NameAPI.getGroupManager().hasAccess(rein.getGroup().getName(), p.getUniqueId(),
+						PermissionType.getPermission("UPGRADE_FACTORY"))) {
+					p.sendMessage(ChatColor.RED + "You dont have permission to upgrade this factory");
+					return;
 				}
 			}
-		} else {
-			rm.breakIt();
 		}
+		FactoryActivateEvent fae = new FactoryActivateEvent(this, p);
+		Bukkit.getPluginManager().callEvent(fae);
+		if (fae.isCancelled()) {
+			return;
+		}
+		if (p != null) {
+			int consumptionIntervall = ((InputRecipe) currentRecipe).getFuelConsumptionIntervall() != -1 ? ((InputRecipe) currentRecipe)
+					.getFuelConsumptionIntervall() : pm.getPowerConsumptionIntervall();
+			if (((FurnacePowerManager) pm).getFuelAmountAvailable() < (currentRecipe.getProductionTime() / consumptionIntervall)) {
+				p.sendMessage(ChatColor.RED
+						+ "You don't have enough fuel, the factory will run out of it before completing");
+			}
+			p.sendMessage(ChatColor.GREEN + "Activated " + name + " with recipe: " + currentRecipe.getName());
+			activator = p.getUniqueId();
+		}
+		activate();
 	}
 
 	/**
@@ -277,10 +269,8 @@ public class FurnCraftChestFactory extends Factory {
 						}
 						// if the time since fuel was last consumed is equal to
 						// how often fuel needs to be consumed
-						int consumptionIntervall = ((InputRecipe) currentRecipe)
-								.getFuelConsumptionIntervall() != -1 ? ((InputRecipe) currentRecipe)
-								.getFuelConsumptionIntervall() : pm
-								.getPowerConsumptionIntervall();
+						int consumptionIntervall = ((InputRecipe) currentRecipe).getFuelConsumptionIntervall() != -1 ? ((InputRecipe) currentRecipe)
+								.getFuelConsumptionIntervall() : pm.getPowerConsumptionIntervall();
 						if (pm.getPowerCounter() >= consumptionIntervall - 1) {
 							// remove one fuel.
 							pm.consumePower();
@@ -299,32 +289,23 @@ public class FurnCraftChestFactory extends Factory {
 					}
 					// if there is no fuel Available turn off the factory
 					else {
-						sendActivatorMessage(ChatColor.GOLD + name
-								+ " deactivated, because it ran out of fuel");
+						sendActivatorMessage(ChatColor.GOLD + name + " deactivated, because it ran out of fuel");
 						deactivate();
 					}
 				}
 
 				// if the production timer has reached the recipes production
 				// time remove input from chest, and add output material
-				else if (currentProductionTimer >= currentRecipe
-						.getProductionTime()) {
-					LoggingUtils.log("Executing recipe "
-							+ currentRecipe.getName() + " for "
-							+ getLogData());
-					RecipeExecuteEvent ree = new RecipeExecuteEvent(this,
-							(InputRecipe) currentRecipe);
+				else if (currentProductionTimer >= currentRecipe.getProductionTime()) {
+					LoggingUtils.log("Executing recipe " + currentRecipe.getName() + " for " + getLogData());
+					RecipeExecuteEvent ree = new RecipeExecuteEvent(this, (InputRecipe) currentRecipe);
 					Bukkit.getPluginManager().callEvent(ree);
 					if (ree.isCancelled()) {
-						LoggingUtils.log("Executing recipe "
-								+ currentRecipe.getName() + " for "
-								+ getLogData()
+						LoggingUtils.log("Executing recipe " + currentRecipe.getName() + " for " + getLogData()
 								+ " was cancelled over the event");
 						return;
 					}
-					sendActivatorMessage(ChatColor.GOLD
-							+ currentRecipe.getName() + " in " + name
-							+ " completed");
+					sendActivatorMessage(ChatColor.GOLD + currentRecipe.getName() + " in " + name + " completed");
 					if (currentRecipe instanceof Upgraderecipe) {
 						// this if else might look a bit weird, but because
 						// upgrading changes the current recipe and a lot of
@@ -334,15 +315,20 @@ public class FurnCraftChestFactory extends Factory {
 						return;
 					} else {
 						currentRecipe.applyEffect(getInventory(), this);
-						runCount.put(currentRecipe,
-								runCount.get(currentRecipe) + 1);
+						int runs = runCount.get(currentRecipe);
+						runs++;
+						runCount.put(currentRecipe, runs);
+						if (currentRecipe.getUses() != -1 && currentRecipe.getUses() >= runs) {
+							recipes.remove(currentRecipe);
+							sendActivatorMessage(ChatColor.GOLD + currentRecipe.getName() + " was removed from " + name
+									+ " , because it's use limit was reached");
+							currentRecipe = null;
+						}
 					}
 					currentProductionTimer = 0;
-					if (currentRecipe instanceof RepairRecipe
-							&& rm.atFullHealth()) {
+					if (currentRecipe instanceof RepairRecipe && rm.atFullHealth()) {
 						// already at full health, dont try to repair further
-						sendActivatorMessage(ChatColor.GOLD + name
-								+ " repaired to full health");
+						sendActivatorMessage(ChatColor.GOLD + name + " repaired to full health");
 						deactivate();
 						return;
 					}
@@ -355,14 +341,11 @@ public class FurnCraftChestFactory extends Factory {
 					}
 				}
 			} else {
-				sendActivatorMessage(ChatColor.GOLD
-						+ name
-						+ " deactivated, because it ran out of required materials");
+				sendActivatorMessage(ChatColor.GOLD + name + " deactivated, because it ran out of required materials");
 				deactivate();
 			}
 		} else {
-			sendActivatorMessage(ChatColor.GOLD + name
-					+ " deactivated, because the factory was destroyed");
+			sendActivatorMessage(ChatColor.GOLD + name + " deactivated, because the factory was destroyed");
 			deactivate();
 		}
 	}
@@ -433,17 +416,23 @@ public class FurnCraftChestFactory extends Factory {
 	 *         selected recipe at least once
 	 */
 	public boolean hasInputMaterials() {
+		if (currentRecipe == null) {
+			return false;
+		}
 		return currentRecipe.enoughMaterialAvailable(getInventory());
 	}
 
 	public static void removePylon(Factory f) {
 		pylonFactories.remove(f);
 	}
-	
+
 	/**
 	 * Removes the given recipe from this factory
-	 * @param recipe Recipe to remove
-	 * @return True if the recipe was removed, false if the recipe could not be removed, because the factory didn't have it
+	 * 
+	 * @param recipe
+	 *            Recipe to remove
+	 * @return True if the recipe was removed, false if the recipe could not be
+	 *         removed, because the factory didn't have it
 	 */
 	public boolean removeRecipe(IRecipe recipe) {
 		if (!recipes.contains(recipe)) {
@@ -452,10 +441,12 @@ public class FurnCraftChestFactory extends Factory {
 		recipes.remove(recipe);
 		return true;
 	}
-	
+
 	/**
 	 * Adds the given recipe to this factory if it doesnt already have it
-	 * @param rec Recipe to add
+	 * 
+	 * @param rec
+	 *            Recipe to add
 	 * @return True if the recipe was added, false if not
 	 */
 	public boolean addRecipe(IRecipe rec) {
@@ -466,17 +457,17 @@ public class FurnCraftChestFactory extends Factory {
 		return true;
 	}
 
-	public void upgrade(String name, List<IRecipe> recipes, ItemStack fuel,
-			int fuelConsumptionIntervall, int updateTime, int maximumHealth, int damageAmountPerDecayIntervall, long gracePeriod) {
+	public void upgrade(String name, List<IRecipe> recipes, ItemStack fuel, int fuelConsumptionIntervall,
+			int updateTime, int maximumHealth, int damageAmountPerDecayIntervall, long gracePeriod) {
 		LoggingUtils.log("Upgrading " + getLogData() + " to " + name);
 		pylonFactories.remove(this);
 		deactivate();
 		this.name = name;
 		this.recipes = recipes;
 		this.updateTime = updateTime;
-		this.pm = new FurnacePowerManager(getFurnace(), fuel,
-				fuelConsumptionIntervall);
-		this.rm = new PercentageHealthRepairManager(maximumHealth, maximumHealth, 0, damageAmountPerDecayIntervall, gracePeriod);
+		this.pm = new FurnacePowerManager(getFurnace(), fuel, fuelConsumptionIntervall);
+		this.rm = new PercentageHealthRepairManager(maximumHealth, maximumHealth, 0, damageAmountPerDecayIntervall,
+				gracePeriod);
 		if (recipes.size() != 0) {
 			setRecipe(recipes.get(0));
 		} else {

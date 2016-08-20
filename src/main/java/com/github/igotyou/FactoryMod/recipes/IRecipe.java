@@ -46,4 +46,9 @@ public interface IRecipe {
 	 *            Factory which is run
 	 */
 	public void applyEffect(Inventory i, Factory f);
+	
+	/**
+	 * @return How often this recipe can be used maximum. -1 means infinite
+	 */
+	public int getUses();
 }
