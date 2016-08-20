@@ -26,9 +26,9 @@ public class AOERepairRecipe extends InputRecipe {
 	private int repairPerEssence;
 	private int range;
 
-	public AOERepairRecipe(String identifier, String name, int productionTime, ItemStack essence,
+	public AOERepairRecipe(String identifier, String name, int productionTime, ItemStack essence, int uses,
 			int range, int repairPerEssence) {
-		super(identifier, name, productionTime, new ItemMap(essence));
+		super(identifier, name, productionTime, new ItemMap(essence), uses);
 		this.essence = essence;
 		this.range = range;
 		this.repairPerEssence = repairPerEssence;

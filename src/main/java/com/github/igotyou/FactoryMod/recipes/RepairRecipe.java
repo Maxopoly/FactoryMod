@@ -22,9 +22,9 @@ import com.github.igotyou.FactoryMod.utility.LoggingUtils;
 public class RepairRecipe extends InputRecipe {
 	private int healthPerRun;
 
-	public RepairRecipe(String identifier, String name, int productionTime, ItemMap input,
+	public RepairRecipe(String identifier, String name, int productionTime, ItemMap input, int uses,
 			int healthPerRun) {
-		super(identifier, name, productionTime, input);
+		super(identifier, name, productionTime, input, uses);
 		this.healthPerRun = healthPerRun;
 	}
 

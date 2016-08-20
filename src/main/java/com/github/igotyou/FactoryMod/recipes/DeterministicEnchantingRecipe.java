@@ -19,9 +19,9 @@ public class DeterministicEnchantingRecipe extends InputRecipe {
 	private int level;
 	private ItemMap tool;
 
-	public DeterministicEnchantingRecipe(String identifier, String name, int productionTime,
+	public DeterministicEnchantingRecipe(String identifier, String name, int productionTime, int uses,
 			ItemMap input, ItemMap tool, Enchantment enchant, int level) {
-		super(identifier, name, productionTime, input);
+		super(identifier, name, productionTime, input, uses);
 		this.enchant = enchant;
 		this.tool = tool;
 		this.level = level;

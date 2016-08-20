@@ -122,11 +122,12 @@ public class ConfigParser {
 		}
 		defaultMenuFactory = config.getString("default_menu_factory");
 		int globalPylonLimit = config.getInt("global_pylon_limit");
+		boolean alwaysLoadBaseRecipes = config.getBoolean("always_load_base_recipes");
 		PylonRecipe.setGlobalLimit(globalPylonLimit);
 		Map <String,String> factoryRenames = parseRenames(config.getConfigurationSection("renames"));
 		manager = new FactoryModManager(plugin, factoryInteractionMaterial,
 				citadelEnabled, nameLayerEnabled, redstonePowerOn, redstoneRecipeChange,
-				logInventories, factoryRenames);
+				logInventories, factoryRenames, alwaysLoadBaseRecipes);
 		upgradeEggs = new HashMap<String, IFactoryEgg>();
 		recipeLists = new HashMap<IFactoryEgg, List<String>>();
 		parseFactories(config.getConfigurationSection("factories"));
@@ -455,13 +456,14 @@ public class ConfigParser {
 			plugin.warning("No name specified for recipe at " + config.getCurrentPath() +". Skipping the recipe.");
 			return null;
 		}
+		int uses = config.getInt("uses", -1);
 		switch (type) {
 		case "PRODUCTION":
 			ItemMap input = parseItemMap(config
 					.getConfigurationSection("input"));
 			ItemMap output = parseItemMap(config
 					.getConfigurationSection("output"));
-			result = new ProductionRecipe(identifier, name, productionTime, input, output);
+			result = new ProductionRecipe(identifier, name, productionTime, input, uses, output);
 			break;
 		case "COMPACT":
 			ItemMap extraMats = parseItemMap(config
@@ -476,20 +478,20 @@ public class ConfigParser {
 					plugin.warning(mat + " is not a valid material to exclude: " + config.getCurrentPath());
 				}
 			}
-			result = new CompactingRecipe(identifier, extraMats, excluded, name,
+			result = new CompactingRecipe(identifier, extraMats, excluded, uses, name,
 					productionTime, compactedLore);
 			break;
 		case "DECOMPACT":
 			ItemMap extraMate = parseItemMap(config
 					.getConfigurationSection("input"));
 			String decompactedLore = config.getString("compact_lore");
-			result = new DecompactingRecipe(identifier, extraMate, name, productionTime,
+			result = new DecompactingRecipe(identifier, extraMate, name, productionTime,uses, 
 					decompactedLore);
 			break;
 		case "REPAIR":
 			ItemMap rep = parseItemMap(config.getConfigurationSection("input"));
 			int health = config.getInt("health_gained");
-			result = new RepairRecipe(identifier, name, productionTime, rep, health);
+			result = new RepairRecipe(identifier, name, productionTime, rep, uses, health);
 			break;
 		case "UPGRADE":
 			ItemMap upgradeCost = parseItemMap(config
@@ -501,7 +503,7 @@ public class ConfigParser {
 						+ " for upgrade recipe " + name);
 				result = null;
 			} else {
-				result = new Upgraderecipe(identifier, name, productionTime, upgradeCost, egg);
+				result = new Upgraderecipe(identifier, name, productionTime, upgradeCost, uses, egg);
 			}
 			break;
 		case "AOEREPAIR":
@@ -512,7 +514,7 @@ public class ConfigParser {
 						.getItemStackRepresentation().get(0);
 				int repPerEssence = config.getInt("repair_per_essence");
 				int range = config.getInt("range");
-				result = new AOERepairRecipe(identifier, name, productionTime, essence, range,
+				result = new AOERepairRecipe(identifier, name, productionTime, essence, uses, range,
 						repPerEssence);
 			} else {
 				plugin.severe("No essence specified for AOEREPAIR " + config.getCurrentPath());
@@ -525,7 +527,7 @@ public class ConfigParser {
 			ItemMap out = parseItemMap(config
 					.getConfigurationSection("output"));
 			int weight = config.getInt("weight");
-			result = new PylonRecipe(identifier, name, productionTime, in, out, weight);
+			result = new PylonRecipe(identifier, name, productionTime, in, uses, out, weight);
 			break;
 		case "ENCHANT":
 			ItemMap inp = parseItemMap(config
@@ -533,7 +535,7 @@ public class ConfigParser {
 			Enchantment enchant = Enchantment.getByName(config.getString("enchant"));
 			int level = config.getInt("level", 1);
 			ItemMap tool = parseItemMap(config.getConfigurationSection("enchant_item"));
-			result = new DeterministicEnchantingRecipe(identifier, name, productionTime, inp, tool, enchant, level);
+			result = new DeterministicEnchantingRecipe(identifier, name, productionTime, uses, inp, tool, enchant, level);
 			break;
 		case "RANDOM":
 			ItemMap inpu = parseItemMap(config.getConfigurationSection("input"));
@@ -562,13 +564,13 @@ public class ConfigParser {
 			if (Math.abs(totalChance - 1.0) > 0.001) {
 				plugin.warning("Sum of output chances for recipe " + name + " is not 1.0. Total sum is: " + totalChance);
 			}
-			result = new RandomOutputRecipe(identifier, name, productionTime, inpu, outputs, displayThis);
+			result = new RandomOutputRecipe(identifier, name, productionTime, inpu, uses, outputs, displayThis);
 			break;
 		case "COSTRETURN":
 			ItemMap costIn = parseItemMap(config
 					.getConfigurationSection("input"));
 			double factor = config.getDouble("factor", 1.0);
-			result = new FactoryMaterialReturnRecipe(identifier, name, productionTime, costIn, factor);
+			result = new FactoryMaterialReturnRecipe(identifier, name, productionTime, uses, costIn, factor);
 			break;
 		case "LOREENCHANT":
 			ItemMap loreCostIn = parseItemMap(config.getConfigurationSection("input"));
@@ -580,7 +582,7 @@ public class ConfigParser {
 				result = null;
 				break;
 			}
-			result = new LoreEnchantRecipe(identifier, name, productionTime, loreCostIn, loreTool, appliedLore, overwrittenLore);
+			result = new LoreEnchantRecipe(identifier, name, productionTime, uses, loreCostIn, loreTool, appliedLore, overwrittenLore);
 			break;
 		default:
 			plugin.severe("Could not identify type " + config.getString("type")

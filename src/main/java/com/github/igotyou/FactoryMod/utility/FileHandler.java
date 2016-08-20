@@ -42,7 +42,7 @@ public class FileHandler {
 	private Map <String, String> factoryRenames;
 
 	public FileHandler(FactoryModManager manager, Map <String, String> factoryRenames) {
-		plugin = FactoryMod.getPlugin();
+		plugin = FactoryMod.getInstance();
 		this.factoryRenames = factoryRenames;
 		this.manager = manager;
 		saveFile = new File(plugin.getDataFolder().getAbsolutePath()

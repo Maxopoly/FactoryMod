@@ -105,7 +105,10 @@ public class FurnCraftChestEgg implements IFactoryEgg {
 				fuel, fuelConsumptionIntervall);
 		FurnCraftChestInteractionManager fccim = new FurnCraftChestInteractionManager();
 		PercentageHealthRepairManager phrm = new PercentageHealthRepairManager(health, maximumHealth, breakTime, healthPerDamagePeriod, breakGracePeriod);
-		List <IRecipe> currRecipes = new ArrayList <IRecipe> (recipes);
+		List <IRecipe> currRecipes = new ArrayList <IRecipe> ();
+		if (FactoryMod.getManager().alwaysLoadBaseRecipes()) {
+			currRecipes.addAll(recipes);
+		}
 		for(String recName : recipeStrings) {
 			boolean found = false;
 			for(IRecipe exRec : currRecipes) {
@@ -117,7 +120,7 @@ public class FurnCraftChestEgg implements IFactoryEgg {
 			if (!found) {
 				IRecipe rec = FactoryMod.getManager().getRecipe(recName);
 				if (rec == null) {
-					FactoryMod.getPlugin().warning("Factory at " + blocks.get(0).toString() + " had recipe " + recName + " saved, but it could not be loaded from the config");
+					FactoryMod.getInstance().warning("Factory at " + blocks.get(0).toString() + " had recipe " + recName + " saved, but it could not be loaded from the config");
 				}
 				else {
 					currRecipes.add(rec);

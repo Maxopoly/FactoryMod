@@ -120,8 +120,8 @@ public abstract class Factory implements Runnable {
 	public abstract void attemptToActivate(Player p, boolean onStartUp);
 
 	public void scheduleUpdate() {
-		threadId = FactoryMod.getPlugin().getServer().getScheduler()
-				.scheduleSyncDelayedTask(FactoryMod.getPlugin(), this, (long) updateTime);
+		threadId = FactoryMod.getInstance().getServer().getScheduler()
+				.scheduleSyncDelayedTask(FactoryMod.getInstance(), this, (long) updateTime);
 	}
 
 	public void turnFurnaceOn(Block f) {

@@ -22,10 +22,10 @@ public class NoRepairDestroyOnBreakManager implements IRepairManager {
 
 	public void breakIt() {
 		FactoryMod
-				.getPlugin()
+				.getInstance()
 				.getServer()
 				.getScheduler()
-				.scheduleSyncDelayedTask(FactoryMod.getPlugin(),
+				.scheduleSyncDelayedTask(FactoryMod.getInstance(),
 						new Runnable() {
 
 							@Override

@@ -27,9 +27,9 @@ public class FactoryMaterialReturnRecipe extends InputRecipe {
 
 	private double factor;
 
-	public FactoryMaterialReturnRecipe(String identifier, String name, int productionTime,
+	public FactoryMaterialReturnRecipe(String identifier, String name, int productionTime, int uses,
 			ItemMap input, double factor) {
-		super(identifier, name, productionTime, input);
+		super(identifier, name, productionTime, input, uses);
 		this.factor = factor;
 	}
 
@@ -72,7 +72,7 @@ public class FactoryMaterialReturnRecipe extends InputRecipe {
 		for (Block b : f.getMultiBlockStructure().getRelevantBlocks()) {
 			b.setType(Material.AIR);
 		}
-		Bukkit.getScheduler().runTaskLater(FactoryMod.getPlugin(),
+		Bukkit.getScheduler().runTaskLater(FactoryMod.getInstance(),
 				new Runnable() {
 					@Override
 					public void run() {

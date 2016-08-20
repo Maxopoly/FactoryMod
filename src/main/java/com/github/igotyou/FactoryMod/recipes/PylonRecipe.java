@@ -23,9 +23,9 @@ public class PylonRecipe extends InputRecipe {
 	private static int globalLimit;
 	private int weight;
 
-	public PylonRecipe(String identifier, String name, int productionTime, ItemMap input,
+	public PylonRecipe(String identifier, String name, int productionTime, ItemMap input, int uses,
 			ItemMap output, int weight) {
-		super(identifier, name, productionTime, input);
+		super(identifier, name, productionTime, input, uses);
 		this.output = output;
 		this.weight = weight;
 	}

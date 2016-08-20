@@ -33,9 +33,9 @@ public class RandomEnchantingRecipe extends InputRecipe {
 		}
 	}
 
-	public RandomEnchantingRecipe(String identifier, String name, int productionTime,
+	public RandomEnchantingRecipe(String identifier, String name, int productionTime, int uses,
 			ItemMap input, Material tool, List<RandomEnchant> enchants) {
-		super(identifier, name, productionTime, input);
+		super(identifier, name, productionTime, input, uses);
 		this.enchants = enchants;
 		this.tool = tool;
 		if (rng == null) {

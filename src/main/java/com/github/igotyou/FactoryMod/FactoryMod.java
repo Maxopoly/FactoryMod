@@ -12,10 +12,10 @@ import vg.civcraft.mc.civmenu.guides.ResponseManager;
 import vg.civcraft.mc.civmodcore.ACivMod;
 
 public class FactoryMod extends ACivMod {
-	private static FactoryModManager manager;
+	private FactoryModManager manager;
 	private static FactoryMod plugin;
-	private static MenuBuilder mb;
-	private static ResponseManager rm;
+	private MenuBuilder mb;
+	private ResponseManager rm;
 
 	public void onEnable() {
 		handle = new FactoryModCommandHandler();
@@ -40,14 +40,14 @@ public class FactoryMod extends ACivMod {
 	}
 
 	public static FactoryModManager getManager() {
-		return manager;
+		return getInstance().manager;
 	}
 
 	public String getPluginName() {
 		return "FactoryMod";
 	}
 
-	public static FactoryMod getPlugin() {
+	public static FactoryMod getInstance() {
 		return plugin;
 	}
 
@@ -62,15 +62,15 @@ public class FactoryMod extends ACivMod {
 	}
 
 	public static MenuBuilder getMenuBuilder() {
-		return mb;
+		return getInstance().mb;
 	}
 
 	/**
 	 * Sends a CivMenu response
 	 */
 	public static void sendResponse(String event, Player p) {
-		if (rm != null) {
-			rm.sendMessageForEvent(event, p);
+		if (getInstance().rm != null) {
+			getInstance().rm.sendMessageForEvent(event, p);
 		}
 	}
 }

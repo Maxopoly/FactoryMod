@@ -23,9 +23,9 @@ import com.github.igotyou.FactoryMod.factories.FurnCraftChestFactory;
 public class Upgraderecipe extends InputRecipe {
 	private IFactoryEgg egg;
 
-	public Upgraderecipe(String identifier, String name, int productionTime, ItemMap input,
+	public Upgraderecipe(String identifier, String name, int productionTime, ItemMap input, int uses,
 			IFactoryEgg egg) {
-		super(identifier, name, productionTime, input);
+		super(identifier, name, productionTime, input, uses);
 		this.egg = egg;
 	}
 

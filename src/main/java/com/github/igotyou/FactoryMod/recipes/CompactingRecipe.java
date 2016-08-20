@@ -25,9 +25,9 @@ public class CompactingRecipe extends InputRecipe {
 	private List<Material> excludedMaterials;
 	private String compactedLore;
 
-	public CompactingRecipe(String identifier, ItemMap input, List<Material> excludedMaterial,
+	public CompactingRecipe(String identifier, ItemMap input, List<Material> excludedMaterial, int uses,
 			String name, int productionTime, String compactedLore) {
-		super(identifier, name, productionTime, input);
+		super(identifier, name, productionTime, input, uses);
 		this.excludedMaterials = excludedMaterial;
 		this.compactedLore = compactedLore;
 	}
@@ -158,7 +158,7 @@ public class CompactingRecipe extends InputRecipe {
 			case 16: return 16;
 			case 1: return 8;
 			default:
-				FactoryMod.getPlugin().warning("Unknown max stacksize for type " + m.toString());
+				FactoryMod.getInstance().warning("Unknown max stacksize for type " + m.toString());
 		}
 		return 999999; //prevents compacting in error case, because never enough will fit in a chest
 	}

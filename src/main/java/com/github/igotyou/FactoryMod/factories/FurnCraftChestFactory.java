@@ -2,6 +2,7 @@ package com.github.igotyou.FactoryMod.factories;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -437,6 +438,32 @@ public class FurnCraftChestFactory extends Factory {
 
 	public static void removePylon(Factory f) {
 		pylonFactories.remove(f);
+	}
+	
+	/**
+	 * Removes the given recipe from this factory
+	 * @param recipe Recipe to remove
+	 * @return True if the recipe was removed, false if the recipe could not be removed, because the factory didn't have it
+	 */
+	public boolean removeRecipe(IRecipe recipe) {
+		if (!recipes.contains(recipe)) {
+			return false;
+		}
+		recipes.remove(recipe);
+		return true;
+	}
+	
+	/**
+	 * Adds the given recipe to this factory if it doesnt already have it
+	 * @param rec Recipe to add
+	 * @return True if the recipe was added, false if not
+	 */
+	public boolean addRecipe(IRecipe rec) {
+		if (recipes.contains(rec)) {
+			return false;
+		}
+		recipes.add(rec);
+		return true;
 	}
 
 	public void upgrade(String name, List<IRecipe> recipes, ItemStack fuel,

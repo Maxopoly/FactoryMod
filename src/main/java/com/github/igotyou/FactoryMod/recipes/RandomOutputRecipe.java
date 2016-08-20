@@ -20,9 +20,9 @@ public class RandomOutputRecipe extends InputRecipe {
 	private static Random rng;
 	private ItemMap lowestChanceMap;
 
-	public RandomOutputRecipe(String identifier, String name, int productionTime, ItemMap input,
+	public RandomOutputRecipe(String identifier, String name, int productionTime, ItemMap input, int uses,
 			Map<ItemMap, Double> outputs, ItemMap displayOutput) {
-		super(identifier, name, productionTime, input);
+		super(identifier, name, productionTime, input, uses);
 		this.outputs = outputs;
 		if (rng == null) {
 			rng = new Random();

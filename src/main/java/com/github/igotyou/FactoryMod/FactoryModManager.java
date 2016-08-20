@@ -55,18 +55,20 @@ public class FactoryModManager {
 	private int redstonePowerOn;
 	private int redstoneRecipeChange;
 	private String compactLore;
+	private boolean alwaysLoadBaseRecipes;
 
 	public FactoryModManager(FactoryMod plugin,
 			Material factoryInteractionMaterial, boolean citadelEnabled,
 			boolean nameLayerEnabled, int redstonePowerOn,
 			int redstoneRecipeChange, boolean logInventories,
-			Map <String,String> factoryRenames) {
+			Map <String,String> factoryRenames, boolean alwaysLoadBaseRecipes) {
 		this.plugin = plugin;
 		this.factoryInteractionMaterial = factoryInteractionMaterial;
 		this.citadelEnabled = citadelEnabled;
 		this.redstonePowerOn = redstonePowerOn;
 		this.redstoneRecipeChange = redstoneRecipeChange;
 		this.fileHandler = new FileHandler(this, factoryRenames);
+		this.alwaysLoadBaseRecipes = alwaysLoadBaseRecipes;
 		
 		if(nameLayerEnabled) {
 			//register our own permissions
@@ -613,5 +615,9 @@ public class FactoryModManager {
 	 */
 	public void registerRecipe(IRecipe recipe) {
 		recipes.put(recipe.getIdentifier(), recipe);
+	}
+	
+	public boolean alwaysLoadBaseRecipes() {
+		return alwaysLoadBaseRecipes;
 	}
 } 

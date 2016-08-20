@@ -95,7 +95,7 @@ public class MenuBuilder {
 				}
 			}
 			if (egg == null) {
-				FactoryMod.getPlugin().warning(
+				FactoryMod.getInstance().warning(
 						"There is no factory with name " + comp);
 				p.sendMessage(ChatColor.RED
 						+ "There is no factory with the name you entered");
@@ -152,7 +152,7 @@ public class MenuBuilder {
 				}
 			};
 			browser.setSlot(upgradeClickable, 16);
-			ScheduledInventoryOpen.schedule(FactoryMod.getPlugin(), browser, p);
+			ScheduledInventoryOpen.schedule(FactoryMod.getInstance(), browser, p);
 		}
 
 	}
@@ -198,7 +198,7 @@ public class MenuBuilder {
 			}
 		};
 		recipeInventory.setSlot(backClickable, size - 5);
-		ScheduledInventoryOpen.schedule(FactoryMod.getPlugin(),
+		ScheduledInventoryOpen.schedule(FactoryMod.getInstance(),
 				recipeInventory, p);
 	}
 
@@ -323,7 +323,7 @@ public class MenuBuilder {
 			}
 		};
 		ci.setSlot(backClickable, 18);
-		ScheduledInventoryOpen.schedule(FactoryMod.getPlugin(), ci, p);
+		ScheduledInventoryOpen.schedule(FactoryMod.getInstance(), ci, p);
 	}
 
 	private void openUpgradeBrowser(Player p, String facName) {
@@ -376,14 +376,14 @@ public class MenuBuilder {
 			}
 		};
 		ci.setSlot(backClickable, 17);
-		ScheduledInventoryOpen.schedule(FactoryMod.getPlugin(), ci, p);
+		ScheduledInventoryOpen.schedule(FactoryMod.getInstance(), ci, p);
 	}
 
 	private void openDetailedRecipeBrowser(Player p, String recipeName) {
 		ClickableInventory.forceCloseInventory(p);
 		if (recipeName == null) {
 			FactoryMod
-					.getPlugin()
+					.getInstance()
 					.warning(
 							"Recipe name cannot be null in openDetailedRecipeBrowser calls");
 			return;
@@ -393,7 +393,7 @@ public class MenuBuilder {
 		InputRecipe rec = null;
 		for (IRecipe recipe : egg.getRecipes()) {
 			if (recipe == null || recipe.getName() == null) {
-				FactoryMod.getPlugin().warning(
+				FactoryMod.getInstance().warning(
 						"Null recipe or recipe name registered with "
 								+ egg.getName());
 				continue;
@@ -404,7 +404,7 @@ public class MenuBuilder {
 			}
 		}
 		if (rec == null) {
-			FactoryMod.getPlugin().warning(
+			FactoryMod.getInstance().warning(
 					"There is no recipe with name " + recipeName);
 			p.sendMessage(ChatColor.RED + "There is no recipe that matches "
 					+ recipeName);
@@ -516,7 +516,7 @@ public class MenuBuilder {
 		}
 		ISUtils.addLore(fuelStack, ChatColor.LIGHT_PURPLE + "Total duration of " + rec.getProductionTime() / 20 + " seconds");
 		ci.setSlot(new DecorationStack(fuelStack), 30);
-		ScheduledInventoryOpen.schedule(FactoryMod.getPlugin(), ci, p);
+		ScheduledInventoryOpen.schedule(FactoryMod.getInstance(), ci, p);
 	}
 
 	public void showPipeMaterials(Player p, Pipe pipe) {
@@ -566,7 +566,7 @@ public class MenuBuilder {
 			};
 			ci.setSlot(nextClick, 49);
 		}
-		ScheduledInventoryOpen.schedule(FactoryMod.getPlugin(), ci, p);
+		ScheduledInventoryOpen.schedule(FactoryMod.getInstance(), ci, p);
 	}
 
 	public void showSorterFace(Player p, Sorter s, BlockFace face) {

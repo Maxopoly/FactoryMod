@@ -65,8 +65,8 @@ public class PercentageHealthRepairManager implements IRepairManager {
 		if (breakTime == 0) {
 			breakTime = System.currentTimeMillis();
 		}
-		FactoryMod.getPlugin().getServer().getScheduler()
-				.scheduleSyncDelayedTask(FactoryMod.getPlugin(), new Runnable() {
+		FactoryMod.getInstance().getServer().getScheduler()
+				.scheduleSyncDelayedTask(FactoryMod.getInstance(), new Runnable() {
 
 					@Override
 					public void run() {

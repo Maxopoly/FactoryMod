@@ -9,6 +9,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import com.github.igotyou.FactoryMod.factories.Factory;
+import com.github.igotyou.FactoryMod.factories.FurnCraftChestFactory;
 import com.github.igotyou.FactoryMod.utility.LoggingUtils;
 
 import vg.civcraft.mc.civmodcore.itemHandling.ISUtils;
@@ -24,8 +25,9 @@ public abstract class InputRecipe implements IRecipe {
 	protected ItemMap input;
 	protected int fuel_consumption_intervall = -1;
 	protected String identifier;
+	private int uses;
 
-	public InputRecipe(String identifier, String name, int productionTime, ItemMap input) {
+	public InputRecipe(String identifier, String name, int productionTime, ItemMap input, int uses) {
 		this.name = name;
 		this.productionTime = productionTime;
 		this.input = input;
@@ -141,6 +143,18 @@ public abstract class InputRecipe implements IRecipe {
 	protected void logAfterRecipeRun(Inventory i, Factory f) {
 		LoggingUtils.logInventory(i, "After executing recipe " + name + " for "
 				+ f.getLogData());
+	}
+	
+	public int getUses() {
+		return uses;
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (!(o instanceof InputRecipe)) {
+			return false;
+		}
+		return ((InputRecipe) o).getIdentifier().equals(getIdentifier());
 	}
 
 }
