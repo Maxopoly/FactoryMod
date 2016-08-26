@@ -48,7 +48,7 @@ public abstract class InputRecipe implements IRecipe {
 	 * @return List of itemstacks which represent the input required to run this
 	 *         recipe
 	 */
-	public abstract List<ItemStack> getInputRepresentation(Inventory i);
+	public abstract List<ItemStack> getInputRepresentation(Inventory i, FurnCraftChestFactory fccf);
 
 	/**
 	 * Used to get a representation of a recipes output materials, which is
@@ -64,7 +64,7 @@ public abstract class InputRecipe implements IRecipe {
 	 * @return List of itemstacks which represent the output returned when
 	 *         running this recipe
 	 */
-	public abstract List<ItemStack> getOutputRepresentation(Inventory i);
+	public abstract List<ItemStack> getOutputRepresentation(Inventory i, FurnCraftChestFactory fccf);
 
 	public String getName() {
 		return name;
@@ -86,7 +86,7 @@ public abstract class InputRecipe implements IRecipe {
 		return input;
 	}
 
-	public boolean enoughMaterialAvailable(Inventory i) {
+	public boolean enoughMaterialAvailable(Inventory i, FurnCraftChestFactory fccf) {
 		return input.isContainedIn(i);
 	}
 	
@@ -98,7 +98,7 @@ public abstract class InputRecipe implements IRecipe {
 	 * @return A single itemstack which is used to represent this recipe as a
 	 *         whole in an item gui
 	 */
-	public abstract ItemStack getRecipeRepresentation();
+	public abstract ItemStack getRecipeRepresentation(FurnCraftChestFactory fccf);
 
 	/**
 	 * Creates a list of ItemStack for a GUI representation. This list contains

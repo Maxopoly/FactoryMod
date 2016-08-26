@@ -41,6 +41,7 @@ import com.github.igotyou.FactoryMod.structures.BlockFurnaceStructure;
 import com.github.igotyou.FactoryMod.structures.FurnCraftChestStructure;
 import com.github.igotyou.FactoryMod.structures.PipeStructure;
 import com.github.igotyou.FactoryMod.utility.FactoryGarbageCollector;
+import com.github.igotyou.FactoryMod.utility.MultiplierConfig;
 
 public class ConfigParser {
 	private FactoryMod plugin;
@@ -463,7 +464,25 @@ public class ConfigParser {
 					.getConfigurationSection("input"));
 			ItemMap output = parseItemMap(config
 					.getConfigurationSection("output"));
-			result = new ProductionRecipe(identifier, name, productionTime, input, uses, output);
+			TreeMap <Integer, MultiplierConfig> boni = new TreeMap<Integer, MultiplierConfig>();
+			ConfigurationSection bonusSection = config.getConfigurationSection("boni");
+			if (boni != null) {
+				for(String bonusKey : bonusSection.getKeys(false)) {
+					ConfigurationSection current = bonusSection.getConfigurationSection(bonusKey);
+					if (current == null) {
+						plugin.warning("Found invalid boni value " + bonusKey + ". Only config section identifiers are allowed on this level");
+						continue;
+					}
+					int upperRunCap = current.getInt("upperRunCap", -1);
+					double outerBonusMultiplier = current.getDouble("outerBonusMultiplier", 1.0);
+					double innerBonusMultiplier = current.getDouble("innerBonusMultiplier", 1.0);
+					double additionalBonusConstant = current.getDouble("additionalBonusConstant", 1.0);
+					int minimumRuns = current.getInt("minimumRunAmount", 0);
+					MultiplierConfig mc = new MultiplierConfig(upperRunCap, outerBonusMultiplier, innerBonusMultiplier, additionalBonusConstant);
+					boni.put(minimumRuns, mc);
+				}
+			}
+			result = new ProductionRecipe(identifier, name, productionTime, input, uses, output, boni);
 			break;
 		case "COMPACT":
 			ItemMap extraMats = parseItemMap(config

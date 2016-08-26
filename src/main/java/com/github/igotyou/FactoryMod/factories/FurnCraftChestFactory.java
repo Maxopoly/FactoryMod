@@ -419,7 +419,7 @@ public class FurnCraftChestFactory extends Factory {
 		if (currentRecipe == null) {
 			return false;
 		}
-		return currentRecipe.enoughMaterialAvailable(getInventory());
+		return currentRecipe.enoughMaterialAvailable(getInventory(), this);
 	}
 
 	public static void removePylon(Factory f) {
@@ -439,6 +439,7 @@ public class FurnCraftChestFactory extends Factory {
 			return false;
 		}
 		recipes.remove(recipe);
+		runCount.remove(recipe);
 		return true;
 	}
 
@@ -454,6 +455,7 @@ public class FurnCraftChestFactory extends Factory {
 			return false;
 		}
 		recipes.add(rec);
+		runCount.put(rec, 0);
 		return true;
 	}
 

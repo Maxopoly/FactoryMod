@@ -1,6 +1,9 @@
 package com.github.igotyou.FactoryMod.recipes;
 
+import java.text.DecimalFormat;
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.TreeMap;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -10,7 +13,8 @@ import org.bukkit.inventory.ItemStack;
 import vg.civcraft.mc.civmodcore.itemHandling.ISUtils;
 import vg.civcraft.mc.civmodcore.itemHandling.ItemMap;
 
-import com.github.igotyou.FactoryMod.factories.Factory;
+import com.github.igotyou.FactoryMod.factories.FurnCraftChestFactory;
+import com.github.igotyou.FactoryMod.utility.MultiplierConfig;
 
 /**
  * Consumes a set of materials from a container and outputs another set of
@@ -18,33 +22,30 @@ import com.github.igotyou.FactoryMod.factories.Factory;
  *
  */
 public class ProductionRecipe extends InputRecipe {
+	
 	private ItemMap output;
+	private TreeMap <Integer, MultiplierConfig> boni;
+	private DecimalFormat decimalFormat;
 
 	public ProductionRecipe(String identifier, String name, int productionTime, ItemMap inputs, int uses,
-			ItemMap output) {
+			ItemMap output, TreeMap <Integer, MultiplierConfig> boni) {
 		super(identifier, name, productionTime, inputs, uses);
 		this.output = output;
+		this.boni = boni;
+		this.decimalFormat = new DecimalFormat("#,#####");
 	}
 
 	public ItemMap getOutput() {
 		return output;
 	}
 
-	public int getCurrentMultiplier(Inventory i) {
-		return input.getMultiplesContainedIn(i);
-	}
-
-	public ItemMap getCurrentOutput(Inventory i) {
-		ItemMap copy = output.clone();
-		copy.multiplyContent(getCurrentMultiplier(i));
-		return copy;
-	}
-
-	public List<ItemStack> getOutputRepresentation(Inventory i) {
-		List<ItemStack> stacks = output.getItemStackRepresentation();
-		if (i == null) {
+	public List<ItemStack> getOutputRepresentation(Inventory i, FurnCraftChestFactory fccf) {
+		List<ItemStack> stacks;
+		if (i == null || fccf == null) {
+			stacks = output.getItemStackRepresentation();
 			return stacks;
 		}
+		stacks = getAdjustedOutput(fccf).getItemStackRepresentation();
 		int possibleRuns = input.getMultiplesContainedIn(i);
 		for (ItemStack is : stacks) {
 			ISUtils.addLore(is, ChatColor.GREEN + "Enough materials for "
@@ -53,19 +54,18 @@ public class ProductionRecipe extends InputRecipe {
 		return stacks;
 	}
 
-	public List<ItemStack> getInputRepresentation(Inventory i) {
+	public List<ItemStack> getInputRepresentation(Inventory i, FurnCraftChestFactory fccf) {
 		if (i == null) {
 			return input.getItemStackRepresentation();
 		}
 		return createLoredStacksForInfo(i);
 	}
 
-	public void applyEffect(Inventory i, Factory f) {
+	public void applyEffect(Inventory i, FurnCraftChestFactory f) {
 		logBeforeRecipeRun(i, f);
-		ItemMap toRemove = input.clone();
-		ItemMap toAdd = output.clone();
-		if (toRemove.isContainedIn(i)) {
-			if (toRemove.removeSafelyFrom(i)) {
+		ItemMap toAdd = getAdjustedOutput(f);
+		if (input.isContainedIn(i)) {
+			if (input.removeSafelyFrom(i)) {
 				for(ItemStack is: toAdd.getItemStackRepresentation()) {
 					i.addItem(is);
 				}
@@ -73,8 +73,14 @@ public class ProductionRecipe extends InputRecipe {
 		}
 		logAfterRecipeRun(i, f);
 	}
+	
+	public ItemMap getAdjustedOutput(FurnCraftChestFactory fccf) {
+		ItemMap toAdd = output.clone();
+		toAdd.multiplyContent(getMultiplier(fccf.getRunCount(this)));
+		return toAdd;
+	}
 
-	public ItemStack getRecipeRepresentation() {
+	public ItemStack getRecipeRepresentation(FurnCraftChestFactory fccf) {
 		List<ItemStack> out = output.getItemStackRepresentation();
 		ItemStack res;
 		if (out.size() == 0) {
@@ -83,6 +89,22 @@ public class ProductionRecipe extends InputRecipe {
 			res = out.get(0);
 		}
 		ISUtils.setName(res, getName());
+		if (fccf == null) {
+			return res;
+		}
+		double multi = getMultiplier(fccf.getRunCount(this));
+		if (multi != 1.0) {
+			ISUtils.addLore(res, ChatColor.GOLD + "Current multiplier: " + decimalFormat.format(multi));
+		}
 		return res;
+	}
+	
+	public double getMultiplier(int run) {
+		Entry <Integer, MultiplierConfig> entry = boni.floorEntry(run);
+		if (entry == null) {
+			return 1.0;
+		}
+		return entry.getValue().getMultiplier(run);
+		
 	}
 }

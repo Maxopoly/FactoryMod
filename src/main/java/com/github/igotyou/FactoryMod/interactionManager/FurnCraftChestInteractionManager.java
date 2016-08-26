@@ -111,7 +111,7 @@ public class FurnCraftChestInteractionManager implements IInteractionManager {
 			.getCurrentRecipe().getName());
 		int index = 4;
 		List<ItemStack> inp = ((InputRecipe) fccf.getCurrentRecipe())
-			.getInputRepresentation(fccf.getInventory());
+			.getInputRepresentation(fccf.getInventory(), fccf);
 		if (inp.size() > 18) {
 		    inp = new ItemMap(inp).getLoredItemCountRepresentation();
 		}
@@ -141,7 +141,7 @@ public class FurnCraftChestInteractionManager implements IInteractionManager {
 		}
 		index = 49;
 		List<ItemStack> outp = ((InputRecipe) fccf.getCurrentRecipe())
-			.getOutputRepresentation(fccf.getInventory());
+			.getOutputRepresentation(fccf.getInventory(), fccf);
 		if (outp.size() > 18) {
 		    outp = new ItemMap(outp).getLoredItemCountRepresentation();
 		}
@@ -218,32 +218,31 @@ public class FurnCraftChestInteractionManager implements IInteractionManager {
 	    ClickableInventory ci = new ClickableInventory(rows * 9,
 		    "Select a recipe");
 	    for (IRecipe rec : fccf.getRecipes()) {
-		InputRecipe recipe = (InputRecipe) (rec);
-		ItemStack recStack = recipe.getRecipeRepresentation();
-		ISUtils.addLore(
-			recStack,
-			ChatColor.GOLD + "Ran "
-				+ String.valueOf(fccf.getRunCount(recipe))
-				+ " times");
-		Clickable c = new Clickable(recStack) {
-
-		    @Override
-		    public void clicked(Player p) {
-			if (fccf.isActive()) {
-			    p.sendMessage(ChatColor.RED
-				    + "You can't switch recipes while the factory is running");
-			} else {
-			    fccf.setRecipe(recipes.get(this));
-			    p.sendMessage(ChatColor.GREEN
-				    + "Switched recipe to "
-				    + recipes.get(this).getName());
-			    FactoryMod.sendResponse("RecipeSwitch", p);
-			}
-
-		    }
-		};
-		recipes.put(c, recipe);
-		ci.addSlot(c);
+			InputRecipe recipe = (InputRecipe) (rec);
+			ItemStack recStack = recipe.getRecipeRepresentation(fccf);
+			ISUtils.addLore(
+				recStack,
+				ChatColor.GOLD + "Ran "
+					+ String.valueOf(fccf.getRunCount(recipe))
+					+ " times");
+			Clickable c = new Clickable(recStack) {
+	
+			    @Override
+			    public void clicked(Player p) {
+					if (fccf.isActive()) {
+					    p.sendMessage(ChatColor.RED
+						    + "You can't switch recipes while the factory is running");
+					} else {
+					    fccf.setRecipe(recipes.get(this));
+					    p.sendMessage(ChatColor.GREEN
+						    + "Switched recipe to "
+						    + recipes.get(this).getName());
+					    FactoryMod.sendResponse("RecipeSwitch", p);
+					}
+			    }
+			};
+			recipes.put(c, recipe);
+			ci.addSlot(c);
 	    }
 	    ItemStack menuStack = new ItemStack(Material.PAINTING);
 	    ISUtils.setName(menuStack, "Open menu");

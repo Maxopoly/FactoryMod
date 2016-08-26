@@ -3,6 +3,7 @@ package com.github.igotyou.FactoryMod.recipes;
 import org.bukkit.inventory.Inventory;
 
 import com.github.igotyou.FactoryMod.factories.Factory;
+import com.github.igotyou.FactoryMod.factories.FurnCraftChestFactory;
 
 /**
  * Encapsulates a specific functionality for a FurnCraftChest factory. Each
@@ -35,7 +36,7 @@ public interface IRecipe {
 	 *            Inventory to check
 	 * @return true if the recipe could be run at least once, false if not
 	 */
-	public boolean enoughMaterialAvailable(Inventory i);
+	public boolean enoughMaterialAvailable(Inventory i, FurnCraftChestFactory fccf);
 
 	/**
 	 * Applies whatever the recipe actually does, it's main functionality
@@ -45,7 +46,7 @@ public interface IRecipe {
 	 * @param f
 	 *            Factory which is run
 	 */
-	public void applyEffect(Inventory i, Factory f);
+	public void applyEffect(Inventory i, FurnCraftChestFactory fccf);
 	
 	/**
 	 * @return How often this recipe can be used maximum. -1 means infinite

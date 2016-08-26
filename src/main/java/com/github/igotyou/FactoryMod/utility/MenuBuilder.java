@@ -177,7 +177,7 @@ public class MenuBuilder {
 				continue;
 			}
 			Clickable c = new Clickable(
-					((InputRecipe) recipes.get(i)).getRecipeRepresentation()) {
+					((InputRecipe) recipes.get(i)).getRecipeRepresentation(null)) {
 				@Override
 				public void clicked(Player arg0) {
 					openDetailedRecipeBrowser(arg0,
@@ -352,11 +352,11 @@ public class MenuBuilder {
 		} else {
 			for (IRecipe recipe : upgrades) {
 				ItemStack recStack = ((InputRecipe) recipe)
-						.getRecipeRepresentation();
+						.getRecipeRepresentation(null);
 				ISUtils.setLore(recStack, ChatColor.LIGHT_PURPLE
 						+ "Click to display more information");
 				Clickable c = new Clickable(
-						((InputRecipe) recipe).getRecipeRepresentation()) {
+						((InputRecipe) recipe).getRecipeRepresentation(null)) {
 					@Override
 					public void clicked(Player p) {
 						openDetailedRecipeBrowser(p,
@@ -418,7 +418,7 @@ public class MenuBuilder {
 		DecorationStack inputClickable = new DecorationStack(inputStack);
 		ci.setSlot(inputClickable, 4);
 		int index = 13;
-		List <ItemStack> ins = rec.getInputRepresentation(null);
+		List <ItemStack> ins = rec.getInputRepresentation(null, null);
 		if (ins.size() > 18) {
 			ins = new ItemMap(ins).getLoredItemCountRepresentation();
 		}
@@ -458,7 +458,7 @@ public class MenuBuilder {
 
 		ci.setSlot(outputClickable, 31);
 		index = 40;
-		List <ItemStack> out = rec.getOutputRepresentation(null);
+		List <ItemStack> out = rec.getOutputRepresentation(null, null);
 		if (out.size() > 18) {
 			out = new ItemMap(out).getLoredItemCountRepresentation();
 		}
