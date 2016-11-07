@@ -66,7 +66,7 @@ public class PrintNoteRecipe extends PrintBookRecipe {
 
 		if (printingPlateStack != null
 				&& toRemove.isContainedIn(i)
-				&& toRemove.removeSafelyFrom(i)
+				&& toRemove.removeSafelyFrom(i) != null
 				)
 		{
 			List<String> textLines = new ArrayList<String>();
